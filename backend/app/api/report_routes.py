@@ -8,6 +8,7 @@ import datetime
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import FileResponse
 from app.core.database import get_database
+from app.core.config import get_storage_path
 from app.auth.security import get_current_user
 from app.ai.computer_vision.damage_analyzer import ComputerVisionDamageAnalyzer
 from app.ai.incident_reconstruction.hypothesis_engine import IncidentReconstructionEngine
@@ -36,10 +37,8 @@ def generate_pdf_report(claim_id: str) -> str:
     decision = db.investigator_decisions.find_one({"claim_id": claim_id}) or {}
     report_record = db.investigation_reports.find_one({"claim_id": claim_id}) or {}
 
-    # File output path
-    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    reports_dir = os.path.join(base_dir, "storage", "reports")
-    os.makedirs(reports_dir, exist_ok=True)
+    # File output path (safe for both local server and Vercel serverless /tmp)
+    reports_dir = get_storage_path("reports")
     pdf_filename = f"CLAIMSIGHT_REPORT_{claim_id}.pdf"
     pdf_path = os.path.join(reports_dir, pdf_filename)
 
@@ -470,8 +469,8 @@ def list_reports(claim_id: str, current_user: dict = Depends(get_current_user)):
 
 @router.get("/reports/{claim_id}/download")
 def download_report(claim_id: str):
-    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    pdf_path = os.path.join(base_dir, "storage", "reports", f"CLAIMSIGHT_REPORT_{claim_id}.pdf")
+    reports_dir = get_storage_path("reports")
+    pdf_path = os.path.join(reports_dir, f"CLAIMSIGHT_REPORT_{claim_id}.pdf")
     if not os.path.exists(pdf_path):
         pdf_path = generate_pdf_report(claim_id)
 
@@ -496,9 +495,7 @@ def generate_fir_pdf_report(claim_id: str) -> str:
         "has_discrepancy": False
     }
 
-    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    reports_dir = os.path.join(base_dir, "storage", "reports")
-    os.makedirs(reports_dir, exist_ok=True)
+    reports_dir = get_storage_path("reports")
     pdf_filename = f"CLAIMSIGHT_POLICE_FIR_GD_{claim_id}.pdf"
     pdf_path = os.path.join(reports_dir, pdf_filename)
 
@@ -684,8 +681,8 @@ def download_fir_report(claim_id: str, current_user: dict = Depends(get_current_
             status_code=403,
             detail="Access restricted: Official police FIR General Diary folios may only be accessed by Chief Officers and Senior Investigators."
         )
-    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    pdf_path = os.path.join(base_dir, "storage", "reports", f"CLAIMSIGHT_POLICE_FIR_GD_{claim_id}.pdf")
+    reports_dir = get_storage_path("reports")
+    pdf_path = os.path.join(reports_dir, f"CLAIMSIGHT_POLICE_FIR_GD_{claim_id}.pdf")
     if not os.path.exists(pdf_path):
         pdf_path = generate_fir_pdf_report(claim_id)
 
@@ -697,8 +694,8 @@ def download_fir_report(claim_id: str, current_user: dict = Depends(get_current_
 
 @router.get("/reports/{claim_id}/fir-download")
 def direct_download_fir_report(claim_id: str):
-    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    pdf_path = os.path.join(base_dir, "storage", "reports", f"CLAIMSIGHT_POLICE_FIR_GD_{claim_id}.pdf")
+    reports_dir = get_storage_path("reports")
+    pdf_path = os.path.join(reports_dir, f"CLAIMSIGHT_POLICE_FIR_GD_{claim_id}.pdf")
     if not os.path.exists(pdf_path):
         pdf_path = generate_fir_pdf_report(claim_id)
 

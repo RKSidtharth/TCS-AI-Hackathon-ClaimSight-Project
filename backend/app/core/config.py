@@ -3,7 +3,12 @@ CLAIMSIGHT AI - Core Application Settings
 """
 
 import os
-from pydantic_settings import BaseSettings, SettingsConfigDict
+try:
+    from pydantic_settings import BaseSettings, SettingsConfigDict
+except ImportError:
+    from pydantic import BaseModel as BaseSettings
+    def SettingsConfigDict(**kwargs):
+        return kwargs
 
 class Settings(BaseSettings):
     HOST: str = "0.0.0.0"
@@ -38,3 +43,21 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="allow")
 
 settings = Settings()
+
+def get_storage_path(subfolder: str) -> str:
+    """Returns a writable directory for storage, falling back to tempdir in serverless environments (e.g. Vercel)."""
+    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    target = os.path.join(base_dir, "storage", subfolder)
+    try:
+        os.makedirs(target, exist_ok=True)
+        test_file = os.path.join(target, ".test_write")
+        with open(test_file, "w") as f:
+            f.write("ok")
+        os.remove(test_file)
+        return target
+    except (OSError, IOError, PermissionError):
+        import tempfile
+        tmp = os.path.join(tempfile.gettempdir(), "claimsight_storage", subfolder)
+        os.makedirs(tmp, exist_ok=True)
+        return tmp
+

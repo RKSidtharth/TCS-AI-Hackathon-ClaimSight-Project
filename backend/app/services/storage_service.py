@@ -6,16 +6,13 @@ Handles file persistence, SHA-256 fingerprinting, EXIF extraction, and duplicate
 import os
 import hashlib
 from PIL import Image, ExifTags
-from app.core.config import settings
+from app.core.config import settings, get_storage_path
 from app.core.database import get_database
 
 class StorageService:
     @staticmethod
     def get_upload_dir():
-        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        upload_dir = os.path.join(base_dir, settings.STORAGE_LOCAL_DIR)
-        os.makedirs(upload_dir, exist_ok=True)
-        return upload_dir
+        return get_storage_path("uploads")
 
     @staticmethod
     def calculate_sha256(content: bytes) -> str:

@@ -1,12 +1,12 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from typing import Optional
 
 class UserLogin(BaseModel):
-    email: EmailStr
+    email: str
     password: str
 
 class UserRegister(BaseModel):
-    email: EmailStr
+    email: str
     password: str
     name: str
     role: Optional[str] = "investigator"
@@ -20,7 +20,7 @@ class TokenResponse(BaseModel):
 class UserOut(BaseModel):
     user_id: str
     name: str
-    email: EmailStr
+    email: str
     role: str
     department: Optional[str] = None
 

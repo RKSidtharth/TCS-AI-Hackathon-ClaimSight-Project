@@ -4,12 +4,19 @@ Multimodal Autonomous Insurance Claims Investigation Platform
 """
 
 import os
+import sys
+
+# Ensure backend root is in sys.path for both local uvicorn and Vercel serverless runtimes
+backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
+
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from app.core.config import settings
+from app.core.config import settings, get_storage_path
 from app.core.database import Database
 from app.api.auth_routes import router as auth_router
 from app.api.claim_routes import router as claim_router
@@ -48,12 +55,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Ensure storage directories exist
-base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-uploads_dir = os.path.join(base_dir, "storage", "uploads")
-reports_dir = os.path.join(base_dir, "storage", "reports")
-os.makedirs(uploads_dir, exist_ok=True)
-os.makedirs(reports_dir, exist_ok=True)
+# Ensure storage directories exist safely across both local and serverless environments
+uploads_dir = get_storage_path("uploads")
+reports_dir = get_storage_path("reports")
 
 # Mount static files for direct evidence media inspection
 app.mount("/static/uploads", StaticFiles(directory=uploads_dir), name="uploads")
