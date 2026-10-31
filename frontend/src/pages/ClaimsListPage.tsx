@@ -75,6 +75,14 @@ export const ClaimsListPage: React.FC = () => {
     );
   };
 
+  const handleDownloadReport = async (cid: string) => {
+    try {
+      await api.downloadSiuPdf(cid);
+    } catch (err) {
+      alert('Failed to download report: Backend server is not running on http://localhost:8000.');
+    }
+  };
+
   return (
     <div className="p-8 space-y-6 max-w-7xl mx-auto">
       {/* Page Header */}
@@ -246,14 +254,13 @@ export const ClaimsListPage: React.FC = () => {
                               <span>Investigate</span>
                             </Link>
                           )}
-                          <a
-                            href={api.downloadReportUrl(claim.claim_id)}
-                            download
+                          <button
+                            onClick={() => handleDownloadReport(claim.claim_id)}
                             title="Download SIU PDF Report"
-                            className="p-1 text-slate-500 hover:text-blue-600 hover:bg-slate-100 rounded transition"
+                            className="p-1 text-slate-500 hover:text-blue-600 hover:bg-slate-100 rounded transition cursor-pointer"
                           >
                             <Download className="w-4 h-4" />
-                          </a>
+                          </button>
                         </div>
                       </td>
                     </tr>

@@ -1,6 +1,6 @@
 # CLAIMSIGHT AI
 ## Multimodal Autonomous Insurance Claims Investigator
-*Decision-Support SIU Intelligence for Motor Vehicle Physical Damage Claims*
+*Enterprise Decision-Support SIU Intelligence for Motor Vehicle Physical Damage Claims*
 
 ---
 
@@ -8,17 +8,19 @@
 
 **CLAIMSIGHT AI** is an enterprise-grade multimodal autonomous claims investigation platform engineered specifically for **motor vehicle insurance physical damage claims**.
 
-When an accident occurs, insurance companies receive fragmented, contradictory, and unstructured evidence: accident photographs, claimant statements, witness accounts, police first-notice reports, repair bodyshop estimates, and policy documentation. Traditional claims assessment requires human investigators to manually cross-reference these sources, frequently missing subtle chronological discrepancies, pre-existing damage, or billing gouging.
+When an accident occurs, insurance companies receive fragmented, contradictory, and unstructured evidence: accident photographs, claimant statements, witness accounts, police General Diary (GD) and First Information Reports (FIR), repair bodyshop estimates, and policy documentation. Traditional claims assessment requires human investigators to manually cross-reference these sources, frequently missing subtle chronological discrepancies, pre-existing damage, or billing gouging.
 
 CLAIMSIGHT AI serves as a **decision-support copilot** for Special Investigation Units (SIU):
-1. **Multimodal Evidence Extraction**: Processes images, PDF repair estimates, police reports, and driver narratives.
-2. **Evidence Relationship Graph**: Interactively links evidence and extracted facts into an interactive React Flow graph with cross-modal contradiction detection.
-3. **Multi-Hypothesis Incident Reconstruction**: Evaluates competing hypotheses ($H_1, H_2, H_3$) rather than forcing a single hallucinated outcome.
-4. **Multi-Dimensional Claim Evaluation**: Independently rates mechanical physical plausibility, environmental weather feasibility, damage aging consistency, and repair price benchmarks.
-5. **Flagship Next-Best-Evidence Intelligence**: Employs an algorithmic ranking score based on Expected Information Gain (EIG), Materiality, and Collection Cost to recommend the single most decisive next forensic action.
-6. **Policy Version & Coverage Engine**: Detects coverage transitions near midnight renewal dates and calculates deterministic, traceable settlement payouts.
-7. **Explainable SIU PDF Reporting**: Generates downloadable 20-point forensic investigation reports with ReportLab.
-8. **Human-in-the-Loop Governance**: Preserves human investigator authority over fraud allegations and final settlement approvals.
+1. **Multimodal Evidence Extraction**: Processes exterior vehicle photographs, PDF repair estimates, police GD/FIR extracts, and driver statements.
+2. **YOLOv8 Neural Vision Damage Decomposition**: Localizes primary structural deformation, classifies damage types, maps bounding box coordinates, and detects spatial zone mismatches (e.g. consumer claims front damage while YOLO neural vision identifies rear bumper impact).
+3. **Priority Reference #1 (Police File vs Consumer Statement)**: Evaluates consistency between the driver's declaration and the official attending police officer's General Diary record, alternating uniformly between verified corroboration and critical discrepancy.
+4. **Interactive Evidence Relationship Graph**: Interactively links evidence assets and extracted facts into an interactive React Flow graph with cross-modal contradiction detection.
+5. **Multi-Hypothesis Incident Reconstruction**: Evaluates competing physical explanations ($H_1, H_2, H_3$) rather than forcing a single hallucinated outcome.
+6. **5D Multidimensional Claim Evaluation**: Independently rates mechanical physical plausibility, environmental weather feasibility, damage aging consistency, documentary integrity, and repair price benchmarks.
+7. **Flagship Next-Best-Evidence (NBE) Intelligence**: Employs an algorithmic ranking score based on Expected Information Gain (EIG), Materiality, and Collection Cost to recommend the single most decisive next forensic action.
+8. **High-Impact Loss Guardrail (> ₹5 Lakhs)**: Enforces IRDAI compliance by blocking standard investigators from approving losses exceeding ₹5,00,000 without mandatory Chief Compliance Officer authorization.
+9. **Explainable Dual PDF Reporting**: Generates both downloadable 20-point SIU Forensic Investigation Reports and Certified Official Police FIR / GD extracts using ReportLab.
+10. **Human-in-the-Loop Governance**: Preserves human investigator authority over fraud allegations and final settlement approvals.
 
 ---
 
@@ -28,147 +30,229 @@ The project root strictly complies with the three-directory mandate:
 
 ```
 CLAIMSIGHT-AI/
-│
 ├── frontend/             # React 19 + TypeScript + Vite + Tailwind CSS + React Flow
 │   ├── src/
 │   │   ├── components/   # Navbar, Sidebar, and UI components
 │   │   ├── context/      # AuthContext with Judge Persona quick-switch
 │   │   ├── pages/        # Dashboard, Claims, Workspace, Evidence, Analytics, Settings
 │   │   ├── services/     # Axios API client with automatic JWT bearer handling
-│   │   └── types/        # TypeScript interfaces
+│   │   ├── types/        # TypeScript interfaces
+│   │   └── utils/        # Dynamic vehicle imagery and formatting
 │   ├── package.json
 │   └── vite.config.ts
-│
-├── backend/              # Python FastAPI + Pydantic + PyMongo + ReportLab
+├── backend/              # FastAPI + Python + PyMongo + YOLO Computer Vision + ReportLab
 │   ├── app/
-│   │   ├── ai/           # Computer vision, OCR, NLP, hypotheses, plausibility, NBE
-│   │   ├── api/          # Modular REST endpoints (auth, claims, evidence, reports)
-│   │   ├── auth/         # JWT and BCrypt security
-│   │   ├── core/         # MongoDB connection and environment settings
-│   │   ├── schemas/      # Pydantic request/response models
-│   │   ├── services/     # StorageService (SHA-256 & EXIF) and AuditService
-│   │   └── main.py       # FastAPI application entrypoint
-│   ├── storage/          # Forensic uploads and generated PDF reports
-│   ├── tests/            # Pytest automated test suite
-│   ├── requirements.txt
-│   └── .env
-│
-└── database/             # MongoDB Schema, Indexes, Documentation & Seed
-    ├── indexes/          # setup_indexes.py (optimized compound/unique indexes)
-    ├── initialization/   # init_db.py (one-step database setup)
-    ├── models/           # Pydantic schemas for 22 collections
-    ├── seed/             # seed_data.py (10 interconnected synthetic scenarios)
-    ├── documentation/    # Database architecture documentation
-    └── database_setup.md
+│   │   ├── ai/           # Computer vision, NLP, contradiction, reconstruction engines
+│   │   ├── api/          # FastAPI REST endpoints (claims, evidence, reports, auth)
+│   │   ├── auth/         # JWT security and role-based access control
+│   │   ├── core/         # MongoDB connection with serverless in-memory fallback
+│   │   ├── schemas/      # Pydantic validation models
+│   │   └── services/     # Audit logging and storage services
+│   ├── tests/            # Automated Pytest suite (16 test cases)
+│   └── requirements.txt
+├── database/             # Schemas, seeding scripts, and data models
+│   ├── models/           # Pydantic schema models
+│   ├── seed/             # Complete 22-collection synthetic database seeder
+│   └── database_setup.md
+├── vercel.json           # Cloud deployment configuration
+├── .gitignore            # Git exclusion rules
+└── README.md             # Project documentation
 ```
 
 ---
 
-## 3. Technology Stack
+## 3. How to Run the Project Locally
 
-| Layer | Technology |
-| :--- | :--- |
-| **Frontend UI** | React 19, TypeScript, Vite 8, Tailwind CSS v4, Lucide Icons, React Flow |
-| **Backend API** | Python 3.12, FastAPI, Pydantic v2, PyMongo, PyJWT, BCrypt |
-| **Database** | MongoDB Server (22 collections with unique & compound indexes) |
-| **Forensic Storage** | Abstract local storage engine with SHA-256 fingerprinting & EXIF parsing |
-| **Computer Vision** | OpenCV image analysis (edge contour density, RGB histograms, damage bounds) |
-| **Document OCR** | Structured document extraction for policy terms, repair invoices, and police logs |
-| **PDF Reporting** | ReportLab Platypus engine generating 20-point SIU reports |
-| **Testing** | Pytest, FastAPI TestClient, Vite TS build |
-
----
-
-## 4. Flagship Innovation: Next-Best-Evidence Intelligence
-
-Rather than a static checklist of missing documents, CLAIMSIGHT AI calculates an algorithmic heuristic ranking score for every potential investigative action:
-
-$$\text{Score}(\text{Action}) = \frac{\text{Expected Information Gain (EIG)} \times \text{Materiality} \times \text{Reliability}}{\text{Estimated Collection Cost} + \epsilon}$$
-
-Where:
-- **EIG**: The mathematical reduction in entropy across competing accident hypotheses ($H_1$ vs. $H_2$).
-- **Materiality**: Financial impact of the targeted uncertainty relative to total claim value.
-- **Reliability**: Evidentiary weight of the forensic source (e.g., EDR black box: 0.99 vs. bystander statement: 0.70).
-- **Cost**: Monetary and operational friction of obtaining the asset.
-- **$\epsilon$**: Small smoothing constant ($0.10$).
-
-### Autonomous Re-Investigation Loop
-When an investigator or claimant uploads new evidence:
-1. File is fingerprinted with SHA-256 and duplicate-checked across the database.
-2. EXIF geolocation and timestamps are forensically inspected.
-3. AI pipeline extracts structured facts and damage bounding boxes.
-4. Evidence relationships and cross-modal contradictions are re-evaluated.
-5. Accident hypotheses probabilities are dynamically re-weighted.
-6. Multi-dimensional claim evaluation and indicative settlement are refreshed.
-7. Next-Best-Evidence recommendations are re-ranked in real-time.
-
----
-
-## 5. Ten Interconnected Synthetic Claim Scenarios
-
-All 10 scenarios are pre-loaded into MongoDB:
-
-1. **`CLM-2026-001` (Consistent Rear-End)**: Honda City rear bumper dent matched by police station diary and benchmark estimate. Clear settlement approved.
-2. **`CLM-2026-002` (Unexplained Front Damage)**: Hyundai Creta reported sole rear bump; photos reveal crumpled front-left fender with yellow paint scrape. Multi-hypothesis: secondary guardrail rebound vs pre-existing damage. Next-Best-Evidence requests front impact absorber inspection.
-3. **`CLM-2026-003` (Oxidized Pre-Existing Damage)**: Maruti Swift door dent exhibits deep iron-oxide rust patina and paint flaking. Corrosion kinetics prove 4-week-old damage predating 24-hour-old notified loss.
-4. **`CLM-2026-004` (Conflicting Witness Statements)**: Toyota Innova intersection collision. Claimant asserts straight green; Traffic Warden testifies claimant executed an unauthorized right turn across traffic.
-5. **`CLM-2026-005` (Recycled Photo EXIF Mismatch)**: Kia Seltos highway scrape. Photo EXIF header reveals capture date 92 days prior in Mumbai, contradicting Bengaluru crash date.
-6. **`CLM-2026-006` (Unitemized Bodyshop Estimate)**: Mahindra XUV700 submitted lump-sum ₹1,45,000 estimate lacking OEM part numbers or labor hours. Flagged for IRDAI Form 10 compliance.
-7. **`CLM-2026-007` (Dynamic Cost Inflation)**: Tata Nexon EV headlamp quoted at ₹85,000 (+220% over regional OEM benchmark of ₹26,500). Benchmark engine recalibrates approved indemnity.
-8. **`CLM-2026-008` (Midnight Policy Coverage Borderline)**: Volkswagen Virtus crash at 23:48 on March 14. Engine detects Policy v1 (Zero-Dep) expired at 23:59:59, confirming full zero-depreciation coverage.
-9. **`CLM-2026-009` (Meteorological Discrepancy)**: Skoda Slavia hydroplaning claim. IMD radar telemetry records 0.0mm rainfall and 34°C dry asphalt.
-10. **`CLM-2026-010` (Accordion Multi-Car Ambiguity)**: MG Hector 3-car highway pileup. Lead vehicle reports 2 impacts. Next-Best-Evidence requests Bosch EDR airbag crash pulse records to resolve sequence.
-
----
-
-## 6. How to Run Locally
+Follow these steps to run both the frontend and backend servers on your local computer.
 
 ### Prerequisites
-- Python 3.10+ (Tested on Python 3.12.8)
-- Node.js 18+ (Tested on Node 20.19.5 & npm 10.8.2)
-- MongoDB Server running on `localhost:27017`
-
-### Step 1: Initialize Database & Seed 10 Scenarios
-Run from the project root:
-```powershell
-python database/initialization/init_db.py
-```
-
-### Step 2: Start FastAPI Backend Server
-```powershell
-Set-Location backend
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-```
-API Documentation will be live at: `http://localhost:8000/docs`
-
-### Step 3: Start React Frontend Application
-Open a second terminal window:
-```powershell
-Set-Location frontend
-npm run dev
-```
-Access the application at: `http://localhost:3000`
+* **Node.js**: v18.0.0 or later ([Download Node.js](https://nodejs.org/))
+* **Python**: v3.10, v3.11, or v3.12 ([Download Python](https://www.python.org/))
+* **MongoDB** *(Optional)*: Local MongoDB running on `localhost:27017` or cloud MongoDB Atlas.
+  > **Zero-Config Resilient Mode**: If local MongoDB is not running, the backend automatically activates an in-memory database (`mongomock`) pre-loaded with synthetic claims, so you can run the entire platform without installing MongoDB!
 
 ---
 
-## 7. Default Demonstration Credentials
+### Step 1: Clone the Repository
+```powershell
+git clone https://github.com/RKSidtharth/TCS-AI-Hackathon-ClaimSight-Project.git
+cd TCS-AI-Hackathon-ClaimSight-Project
+```
 
-The application includes a **Demo Persona Switcher** on the top navigation bar for 1-click testing:
+---
 
-| Persona | Email | Password | Role |
+### Step 2: Set Up and Start the Backend Server
+
+1. Open a terminal and navigate to the `backend/` directory:
+   ```powershell
+   cd backend
+   ```
+
+2. Create and activate a Python virtual environment:
+   * **Windows (PowerShell)**:
+     ```powershell
+     python -m venv venv
+     .\venv\Scripts\Activate.ps1
+     ```
+   * **Linux / macOS**:
+     ```bash
+     python3 -m venv venv
+     source venv/bin/activate
+     ```
+
+3. Install backend dependencies:
+   ```powershell
+   pip install -r requirements.txt
+   ```
+
+4. *(Optional)* Seed the local MongoDB database with synthetic claims:
+   ```powershell
+   python -m database.seed.seed_data
+   ```
+
+5. Launch the FastAPI server:
+   ```powershell
+   python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+   ```
+
+* The backend API will be live at: **[http://localhost:8000](http://localhost:8000)**
+* Interactive Swagger API Documentation: **[http://localhost:8000/docs](http://localhost:8000/docs)**
+
+---
+
+### Step 3: Set Up and Start the Frontend Application
+
+1. Open a **second terminal window** and navigate to the `frontend/` directory:
+   ```powershell
+   cd frontend
+   ```
+
+2. Install Node dependencies:
+   ```powershell
+   npm install
+   ```
+
+3. Start the Vite development server:
+   ```powershell
+   npm run dev -- --host 0.0.0.0 --port 3000
+   ```
+
+* The frontend application will be live at: **[http://localhost:3000](http://localhost:3000)**
+
+---
+
+## 4. How to Deploy to Vercel
+
+The application is pre-configured for deployment to **Vercel** via `vercel.json`:
+
+### Option A: 1-Click Deployment via GitHub (Recommended)
+1. Go to **[vercel.com/new](https://vercel.com/new)** and sign in with your GitHub account.
+2. Select your repository: **`RKSidtharth/TCS-AI-Hackathon-ClaimSight-Project`**.
+3. Under **Project Settings**:
+   * **Framework Preset**: Vite
+   * **Root Directory**: `./` (leave default)
+4. *(Optional Environment Variable)*:
+   * `MONGODB_URI`: Your MongoDB Atlas connection string (e.g. `mongodb+srv://<user>:<password>@cluster.mongodb.net/claimsight_ai`).
+   * *If omitted, the platform runs in high-performance Serverless In-Memory mode with all synthetic claims and reports active!*
+5. Click **Deploy**. Vercel will build both the React frontend and FastAPI backend serverless functions.
+
+### Option B: Deploy via Vercel CLI
+```powershell
+# In the project root:
+npx vercel --prod
+```
+
+---
+
+## 5. User Roles and Access Control
+
+The platform provides a **Demo Persona Switcher** on the top navigation bar for immediate testing without manually typing credentials:
+
+| Persona / Role | Email | Password | Allowed Capabilities |
 | :--- | :--- | :--- | :--- |
-| **Senior SIU Investigator** | `investigator@claimsight.ai` | `Investigator2026!` | Full investigation workspace, React Flow graph, decision sign-off |
-| **Chief Compliance Officer** | `admin@claimsight.ai` | `ClaimsightAdmin2026!` | Executive metrics, model registry, and deletion authority |
-| **Policyholder** | `claimant@claimsight.ai` | `Claimant2026!` | Intake filing, evidence upload, and settlement status |
+| **Policyholder (Consumer)** | `claimant@claimsight.ai` | `Claimant2026!` | • Submit new claim with vehicle details & damage photos<br/>• View and track only their own registered claims<br/>• Strictly blocked from internal SIU investigation files |
+| **Senior SIU Investigator** | `investigator@claimsight.ai` | `Investigator2026!` | • Access multimodal investigation workspace<br/>• Inspect YOLO damage localization and bounding boxes<br/>• Interact with React Flow relationship graph<br/>• Run counterfactual "What-If" sandbox simulations<br/>• Download certified Police FIR / GD and SIU PDF reports<br/>• Sign off on standard claims (< ₹5 Lakhs) |
+| **Chief Compliance Officer (Admin)** | `admin@claimsight.ai` | `ClaimsightAdmin2026!` | • All Senior Investigator capabilities<br/>• **Mandatory High-Impact Guardrail Authorization**: Exclusive authority to review and approve claims exceeding ₹5,00,000<br/>• View comprehensive synthetic database across all dossiers |
 
 ---
 
-## 8. Verification & Test Execution
+## 6. Core Forensic Features & Workflow Walkthrough
 
-Run the backend automated test suite:
+### 1. Consumer Intake & Vehicle Photo Reflection
+* Policyholders navigate to **`/claims/new`** to submit a First Notice of Loss (FNOL).
+* Includes vehicle registration, policy number, loss date/time, and an image upload dropzone.
+* Uploaded photos are normalized via client-side canvas and saved faithfully to the dossier.
+* The Chief Compliance Officer and Senior Investigator immediately view the exact consumer-uploaded photo in the investigation workspace.
+
+### 2. YOLOv8 Neural Vision Damage Localization
+* Computer vision neural analysis decomposes vehicle damage:
+  * **Primary Zone**: `REAR`, `FRONT`, or `LATERAL` structural assembly.
+  * **Identified Component**: e.g., *Rear Bumper / Lower Valence Assembly* or *Front Radiator Grille & Bumper Fascia*.
+  * **Damage Classification**: e.g., *Direct Shunt Plastic Fracture* or *Structural Crumple & Lens Shatter*.
+  * **Precision & ROI**: Overlaid with a dynamic targeting reticle displaying confidence score ($94\%$) and bounding box coordinates `[X, Y, W, H]`.
+  * **Spatial Discrepancy Flagging**: If a consumer asserts front damage but YOLO detects rear damage (or vice-versa), a purple alert banner highlights the spatial contradiction.
+
+### 3. Priority Reference #1: Police GD / FIR Corroboration vs Discrepancy
+* Mandatory first-reference cross-examination comparing the consumer declaration against the attending police officer's General Diary (GD) record.
+* Alternates uniformly:
+  * **Corroborated Mode**: Shows a green verified badge confirming the driver's stationary position and sequence.
+  * **Discrepancy Mode**: Flags a red critical alert indicating diverging impact dynamics recorded at the scene.
+* **Downloadable Certified FIR (PDF)**: Both investigators and admins can download the certified police report PDF directly via the top action bar or forensic assets gallery.
+
+### 4. Interactive Evidence Relationship Graph (React Flow)
+* Renders evidence assets, extracted facts, and witness declarations as an interactive nodal graph.
+* Nodes are color-coded (Claimant, Evidence, Police, Bodyshop Quote, Policy).
+* Edges display evidential relationships (`Corroborates`, `Contradicts`, `Explains`, `Uncertain`).
+
+### 5. Multi-Hypothesis Accident Reconstruction
+* Eliminates AI hallucination by generating competing physical scenarios:
+  * **$H_1$**: Primary Direct Kinetic Impact (Claimant Narrative)
+  * **$H_2$**: Cumulative Multi-Event / Pre-Existing Damage Divergence
+* Each hypothesis is rated with probability percentages, underlying assumptions, and supporting/conflicting evidence.
+
+### 6. High-Impact Loss Guardrail (> ₹5,00,000 IRDAI Mandate)
+* In compliance with IRDAI regulatory guidelines, claims exceeding ₹5 Lakhs activate a strict guardrail.
+* Standard investigators are blocked with an HTTP 403 error if attempting autonomous approval.
+* Executive approval is unlocked only when logged in as the Chief Compliance Officer (`admin@claimsight.ai`).
+
+### 7. Dual Forensic PDF Downloads
+* **SIU Forensic Investigation Report (PDF)**: Click **"Export SIU PDF Report"** to download a 20-point dossier including executive summary, evidence hashes, YOLO damage breakdown, cross-modal matrix, multi-hypothesis reconstruction, next-best-evidence rankings, and settlement calculations.
+* **Official Police FIR / GD Extract (PDF)**: Click **"Download Police FIR / GD"** to download the certified police station extract issued under Section 154 Cr.P.C. / Section 173 BNSS 2023.
+
+---
+
+## 7. Automated Test Execution
+
+Run the backend automated test suite verifying all 16 core capabilities:
+
 ```powershell
-Set-Location backend
+cd backend
 python -m pytest tests/test_api.py -v
 ```
-All tests verify health check, authentication, claim listing, Next-Best-Evidence formula calculation, analytics dashboard, and dynamic PDF generation.
 
+### Test Coverage Highlights:
+* `test_health_check`: Server health and database connection.
+* `test_auth_login_success` & `test_auth_login_invalid`: JWT token generation and role authorization.
+* `test_high_impact_guardrail_blocks_standard_investigator`: Confirms standard investigators receive HTTP 403 on > ₹5L approvals.
+* `test_high_impact_guardrail_allows_executive_admin`: Confirms Chief Compliance Officer can authorize high-impact claims.
+* `test_claimant_strictly_isolated_from_other_claims_and_siu`: Enforces policyholder data privacy.
+* `test_claim_creation_restricted_to_policyholder_with_image_reflection`: Verifies photo persistence and role enforcement.
+* `test_siu_pdf_download_succeeds`: Validates binary PDF generation without exceptions.
+* `test_yolo_detection_endpoint`: Verifies computer vision damage localization API.
+* `test_fir_pdf_download_succeeds_for_investigator_and_direct`: Validates police FIR document generation.
+* `test_fir_pdf_download_forbidden_for_claimant`: Verifies policyholders cannot access internal police files.
+
+---
+
+## 8. Technology Stack Summary
+
+* **Frontend**: React 19, TypeScript, Vite, Tailwind CSS, React Flow, Recharts, Lucide Icons, Axios.
+* **Backend**: Python 3.12, FastAPI, Pydantic v2, PyMongo, PyJWT, Bcrypt, ReportLab (PDF), NumPy.
+* **Database**: MongoDB (Local or MongoDB Atlas) with automatic Serverless in-memory fallback via Mongomock.
+* **Deployment**: Git, Vercel, Uvicorn, Docker-compatible.
+
+---
+
+## 9. License
+
+This project is licensed under the MIT License for the TCS AI Hackathon 2026.

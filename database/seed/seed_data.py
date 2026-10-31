@@ -28,8 +28,9 @@ def hash_pw(pw: str) -> str:
     return bcrypt.hashpw(pw.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
 
-def seed_database(uri: str = "mongodb://localhost:27017", db_name: str = "claimsight_ai"):
-    client = pymongo.MongoClient(uri)
+def seed_database(uri: str = "mongodb://localhost:27017", db_name: str = "claimsight_ai", client=None):
+    if client is None:
+        client = pymongo.MongoClient(uri)
     db = client[db_name]
     print(f"[*] Seeding CLAIMSIGHT AI database '{db_name}'...")
 

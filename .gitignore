@@ -19,6 +19,7 @@ backend/__pycache__/
 backend/*/__pycache__/
 backend/*/*/__pycache__/
 backend/storage/uploads/
+backend/storage/reports/*.pdf
 backend/.env
 venv/
 .venv/

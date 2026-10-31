@@ -56,6 +56,34 @@ export const InvestigationWorkspace: React.FC = () => {
   const [decisionError, setDecisionError] = useState<string | null>(null);
   const [savingDecision, setSavingDecision] = useState(false);
 
+  // PDF download loading states
+  const [downloadingSiu, setDownloadingSiu] = useState(false);
+  const [downloadingFir, setDownloadingFir] = useState(false);
+
+  const handleDownloadSiuReport = async () => {
+    try {
+      setDownloadingSiu(true);
+      await api.downloadSiuPdf(activeClaimId);
+    } catch (err: any) {
+      console.error('Failed to download SIU report', err);
+      alert('Unable to download SIU Report: Please ensure the Claimsight backend server is running on http://localhost:8000.');
+    } finally {
+      setDownloadingSiu(false);
+    }
+  };
+
+  const handleDownloadFirReport = async () => {
+    try {
+      setDownloadingFir(true);
+      await api.downloadFirPdf(activeClaimId);
+    } catch (err: any) {
+      console.error('Failed to download Police FIR report', err);
+      alert('Unable to download Police FIR / GD extract: Please ensure the Claimsight backend server is running on http://localhost:8000.');
+    } finally {
+      setDownloadingFir(false);
+    }
+  };
+
   useEffect(() => {
     loadClaimDirectory();
   }, []);
@@ -321,24 +349,32 @@ export const InvestigationWorkspace: React.FC = () => {
             <span>Re-Run AI Inference</span>
           </button>
 
-          <a
-            href={api.downloadFirReportUrl(activeClaimId)}
-            download={`Official_Police_FIR_GD_${activeClaimId}.pdf`}
-            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-100 rounded-lg text-xs font-semibold shadow-xs transition flex items-center gap-1.5 border border-slate-700"
+          <button
+            onClick={handleDownloadFirReport}
+            disabled={downloadingFir}
+            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-100 rounded-lg text-xs font-semibold shadow-xs transition flex items-center gap-1.5 border border-slate-700 disabled:opacity-60 cursor-pointer"
             title="Download certified Official Police FIR / General Diary extract"
           >
-            <FileText className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Download Police FIR / GD</span>
-          </a>
+            {downloadingFir ? (
+              <span className="w-3.5 h-3.5 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <FileText className="w-3.5 h-3.5 text-emerald-400" />
+            )}
+            <span>{downloadingFir ? 'Generating FIR...' : 'Download Police FIR / GD'}</span>
+          </button>
 
-          <a
-            href={api.downloadReportUrl(activeClaimId)}
-            download
-            className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-xs transition flex items-center gap-1.5"
+          <button
+            onClick={handleDownloadSiuReport}
+            disabled={downloadingSiu}
+            className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-xs transition flex items-center gap-1.5 disabled:opacity-60 cursor-pointer"
           >
-            <Download className="w-3.5 h-3.5 text-blue-400" />
-            <span>Export SIU PDF Report</span>
-          </a>
+            {downloadingSiu ? (
+              <span className="w-3.5 h-3.5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Download className="w-3.5 h-3.5 text-blue-400" />
+            )}
+            <span>{downloadingSiu ? 'Generating SIU...' : 'Export SIU PDF Report'}</span>
+          </button>
         </div>
       </div>
 
@@ -471,14 +507,14 @@ export const InvestigationWorkspace: React.FC = () => {
                         <span className="text-[10px] px-2 py-0.5 rounded bg-red-950 border border-red-700 font-mono text-red-300 font-bold">
                           {claim.police_report?.fir_gd_number || 'POLICE GD-482'} / {claim.police_report?.station_name || 'STATION EXTRACT'}
                         </span>
-                        <a
-                          href={api.downloadFirReportUrl(activeClaimId)}
-                          download={`Official_Police_FIR_GD_${activeClaimId}.pdf`}
-                          className="text-[10px] px-2 py-0.5 rounded bg-red-900 hover:bg-red-800 border border-red-700 text-white font-bold flex items-center gap-1 transition shadow-xs"
+                        <button
+                          onClick={handleDownloadFirReport}
+                          disabled={downloadingFir}
+                          className="text-[10px] px-2.5 py-1 rounded bg-red-900 hover:bg-red-800 border border-red-700 text-white font-bold flex items-center gap-1 transition shadow-xs cursor-pointer disabled:opacity-60"
                         >
                           <Download className="w-3 h-3" />
-                          <span>Download FIR</span>
-                        </a>
+                          <span>{downloadingFir ? 'Downloading...' : 'Download FIR'}</span>
+                        </button>
                       </div>
                     </div>
                     <p className="text-slate-100 leading-relaxed text-[11px] font-medium">
@@ -511,14 +547,14 @@ export const InvestigationWorkspace: React.FC = () => {
                         <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-950 border border-emerald-700 font-mono text-emerald-300 font-bold">
                           {claim.police_report?.fir_gd_number || 'POLICE GD'} / {claim.police_report?.station_name || 'STATION EXTRACT'}
                         </span>
-                        <a
-                          href={api.downloadFirReportUrl(activeClaimId)}
-                          download={`Official_Police_FIR_GD_${activeClaimId}.pdf`}
-                          className="text-[10px] px-2 py-0.5 rounded bg-emerald-800 hover:bg-emerald-700 border border-emerald-600 text-white font-bold flex items-center gap-1 transition shadow-xs"
+                        <button
+                          onClick={handleDownloadFirReport}
+                          disabled={downloadingFir}
+                          className="text-[10px] px-2.5 py-1 rounded bg-emerald-800 hover:bg-emerald-700 border border-emerald-600 text-white font-bold flex items-center gap-1 transition shadow-xs cursor-pointer disabled:opacity-60"
                         >
                           <Download className="w-3 h-3" />
-                          <span>Download FIR</span>
-                        </a>
+                          <span>{downloadingFir ? 'Downloading...' : 'Download FIR'}</span>
+                        </button>
                       </div>
                     </div>
                     <p className="text-slate-100 leading-relaxed text-[11px] font-medium">
@@ -810,14 +846,14 @@ export const InvestigationWorkspace: React.FC = () => {
                             </div>
                           </div>
                           {isPoliceDoc && (
-                            <a
-                              href={api.downloadFirReportUrl(activeClaimId)}
-                              download={`Official_Police_FIR_GD_${activeClaimId}.pdf`}
-                              className="mt-2 inline-flex items-center justify-center gap-1.5 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-blue-300 border border-slate-700 rounded text-[10px] font-semibold transition"
+                            <button
+                              onClick={handleDownloadFirReport}
+                              disabled={downloadingFir}
+                              className="mt-2 inline-flex items-center justify-center gap-1.5 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-blue-300 border border-slate-700 rounded text-[10px] font-semibold transition cursor-pointer disabled:opacity-60"
                             >
                               <Download className="w-3 h-3 text-emerald-400" />
-                              <span>Download Certified FIR (PDF)</span>
-                            </a>
+                              <span>{downloadingFir ? 'Downloading...' : 'Download Certified FIR (PDF)'}</span>
+                            </button>
                           )}
                         </div>
                       );

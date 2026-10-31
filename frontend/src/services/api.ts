@@ -97,5 +97,33 @@ export const api = {
   generateReport: (claimId: string) => apiClient.post(`/claims/${claimId}/reports`),
   downloadReportUrl: (claimId: string) => `/api/reports/${claimId}/download`,
   downloadFirReportUrl: (claimId: string) => `/api/reports/${claimId}/fir-download`,
+  downloadSiuPdf: async (claimId: string) => {
+    const response = await apiClient.get(`/reports/${claimId}/download`, {
+      responseType: 'blob',
+    });
+    const blob = new Blob([response.data], { type: 'application/pdf' });
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.setAttribute('download', `CLAIMSIGHT_Investigation_Report_${claimId}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 2000);
+  },
+  downloadFirPdf: async (claimId: string) => {
+    const response = await apiClient.get(`/reports/${claimId}/fir-download`, {
+      responseType: 'blob',
+    });
+    const blob = new Blob([response.data], { type: 'application/pdf' });
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.setAttribute('download', `Official_Police_FIR_GD_${claimId}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 2000);
+  },
 };
 
